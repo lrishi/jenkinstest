@@ -1,150 +1,51 @@
+def buildSuccess = false
 pipeline {
   agent any
   stages {
-    stage('Checkout') {
+    stage("Generate Builds and Tests") {
       steps {
-        sh 'ls -lha /'
+        echo "Came here"
       }
     }
-
-    stage('Formatting and Validation') {
+    stage("Start Pipeline") {
       steps {
-        sh 'ls -lha'
+        script {
+          def prl = [:]
+          prl["Build"] = {
+            stage("Build") {
+              script {
+                sleep 30
+                buildSuccess = true
+              }
+            }
+          }
+          prl["Test 1"] = {
+            stage("Test 1") {
+                script {
+                  waitUntil {
+                    script {
+                      return buildSuccess
+                    }
+                  }
+                  sleep(2)
+                }
+            }
+          }
+          prl["Test 2"] = {
+            stage("Test 2") {
+                script {
+                  waitUntil {
+                    script {
+                      return buildSuccess
+                    }
+                  }
+                  sleep(3)
+                }
+            }
+          }
+          parallel prl
+        }
       }
     }
-
-    stage('Generate Builds and Tests') {
-      steps {
-        sh 'ls'
-      }
-    }
-
-    stage('Windows Build') {
-      parallel {
-        stage('Windows Build') {
-          steps {
-            sh 'ls'
-          }
-        }
-
-        stage('MacOS Build') {
-          steps {
-            sh 'ls'
-          }
-        }
-
-        stage('Linux Build') {
-          steps {
-            echo 'ok'
-          }
-        }
-
-      }
-    }
-
-    stage('Windows Test') {
-      parallel {
-        stage('Windows Test') {
-          steps {
-            sh 'ls'
-          }
-        }
-
-        stage('MacOS Test') {
-          steps {
-            sh 'ls'
-          }
-        }
-
-        stage('Linux Test') {
-          steps {
-            sh 'ls'
-          }
-        }
-
-      }
-    }
-
-    stage('Finalize') {
-      steps {
-        sh 'ls'
-      }
-    }
-
-  }
-}
-pipeline {
-  agent any
-  stages {
-    stage('Checkout') {
-      steps {
-        sh 'ls -lha /'
-      }
-    }
-
-    stage('Formatting and Validation') {
-      steps {
-        sh 'ls -lha'
-      }
-    }
-
-    stage('Generate Builds and Tests') {
-      steps {
-        sh 'ls'
-      }
-    }
-
-    stage('Windows Build') {
-      parallel {
-        stage('Windows Build') {
-          steps {
-            sh 'ls'
-          }
-        }
-
-        stage('MacOS Build') {
-          steps {
-            sh 'ls'
-          }
-        }
-
-        stage('Linux Build') {
-          steps {
-            echo 'ok'
-          }
-        }
-
-      }
-    }
-
-    stage('Windows Test') {
-      parallel {
-        stage('Windows Test') {
-          steps {
-            sh 'ls'
-          }
-        }
-
-        stage('MacOS Test') {
-          steps {
-            sh 'ls'
-          }
-        }
-
-        stage('Linux Test') {
-          steps {
-            sh 'ls'
-          }
-        }
-
-      }
-    }
-
-    stage('Finalize') {
-      steps {
-        sh 'ls'
-      }
-    }
-
-  }
+  }  
 }
